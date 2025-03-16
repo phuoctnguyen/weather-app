@@ -1,12 +1,23 @@
+from dotenv import load_dotenv
+import os
 import requests
-import sys
+
+# Load environment variables from .env
+load_dotenv()
+
+# Get API key from .env
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
+
+# Ensure API Key is loaded correctly
+if not API_KEY:
+    raise ValueError("API Key not found! Make sure you have a .env file with OPENWEATHER_API_KEY set.")
 
 def get_weather(city, api_key):
     base_url = "http://api.openweathermap.org/data/2.5/weather"
     params = {
         "q": city,
         "appid": api_key,
-        "units": "metric"  # Change to "imperial" for Fahrenheit
+        "units": "imperial"  # Fahrenheit
     }
     
     try:
@@ -30,7 +41,7 @@ def get_weather(city, api_key):
 def display_weather(weather):
     if weather:
         print(f"\nWeather in {weather['city']}:\n")
-        print(f"Temperature: {weather['temperature']}°C")
+        print(f"Temperature: {weather['temperature']}°F")  # Fixed °F instead of °C
         print(f"Condition: {weather['description'].title()}")
         print(f"Humidity: {weather['humidity']}%")
         print(f"Wind Speed: {weather['wind_speed']} m/s\n")
@@ -38,7 +49,6 @@ def display_weather(weather):
         print("Could not retrieve weather data.")
 
 if __name__ == "__main__":
-    API_KEY = "bce6f46add7b3ede49bee75169de8399"  # Replace with your API key
     city_name = input("Enter city name: ")
     weather_data = get_weather(city_name, API_KEY)
     display_weather(weather_data)
